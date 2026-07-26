@@ -23,16 +23,9 @@ Currently building agents that know when NOT to trust themselves
 aadhi@dev:~$ cat philosophy.md
 ```
 ```
-> I build for real users in high-stakes environments —
-  healthcare, legal systems, financial platforms.
-
-> Before I write code I want to know:
-    - why this should exist
-    - who it actually serves
-    - how I'll know if it worked
-
-> ambiguity -> clarity
-> complex systems -> systems a stressed human can actually use
+> I build for real users in high-stakes environments.
+> Before I write code: why does this exist, who does it serve,
+  how will I know if it worked.
 ```
 
 ```bash
@@ -46,33 +39,32 @@ royal-hospital-for-women/    swe-thesis          Sep 2021 – Aug 2022
 ```
 
 ```bash
-aadhi@dev:~$ cd projects/ticketflow && cat README.md
+aadhi@dev:~$ cd projects/ridestream && cat README.md
 ```
 ```
-TicketFlow — agentic support triage
+RideStream — a query layer for people who don't know the schema
 
 the problem:
-  support agents fail quietly — confidently wrong,
-  not visibly unsure.
+  a STAR schema is efficient to query and useless to someone
+  who doesn't know it exists.
 
 what I built:
-  a LangGraph agent that triages tickets, pulls context via RAG,
-  and knows when to shut up and escalate to a human instead.
+  Event Hub -> ADF -> Databricks medallion pipeline, modeled into
+  a STAR schema (SCD Type 1 + Type 2), with a Claude-backed
+  NL-to-SQL layer on top — validated and logged, not "trust the LLM
+  and hope."
 
 how I actually tested it:
-  threw prompt injections and deliberately ambiguous tickets at it
-  until I found where confidence outran accuracy. rebuilt the
-  routing logic from there.
+  20 questions across joins, aggregations, and deliberately
+  out-of-scope requests. 100% success on answerable ones, 100%
+  correct rejection on the rest — including a DELETE it should
+  never have generated in the first place.
 
-bonus:
-  nightly Databricks pipeline turns resolved tickets into trend
-  data, so the system gets a little smarter about itself.
-
-stack: LangGraph · GraphQL · React · TypeScript · PostgreSQL · Databricks
+stack: Azure Event Hub · Data Factory · Databricks · PySpark · Delta Lake · Claude API
 ```
 
 ```bash
-aadhi@dev:~/projects/ticketflow$ cd ../studyos && cat README.md
+aadhi@dev:~/projects/ridestream$ cd ../studyos && cat README.md
 ```
 ```
 StudyOS — a study assistant that actually knows my notes
@@ -120,7 +112,7 @@ aadhi@dev:~$ cat stack.json
   "languages":   ["Python", "SQL", "TypeScript", "JavaScript"],
   "frontend":    ["React", "Next.js"],
   "backend":     ["Node.js", "NestJS", "FastAPI", "Flask", "GraphQL"],
-  "data_cloud":  ["PostgreSQL", "PySpark", "Azure Databricks", "Delta Lake", "Docker"],
+  "data_cloud":  ["PostgreSQL", "PySpark", "Azure Databricks", "Azure Event Hub", "Azure Data Factory", "Delta Lake", "Jinja", "Docker"],
   "ai_tools":    ["Claude API", "OpenAI API", "ChromaDB", "SentenceTransformers"]
 }
 ```
@@ -144,9 +136,10 @@ aadhi@dev:~$ cat education.log
 aadhi@dev:~$ cat writing/index.md
 ```
 ```
-- "It Started With a TV Remote"
-  -> a shift from feature-thinking to user-thinking
-  -> https://aadhishrii.hashnode.dev/it-started-with-a-tv-remote
+- "Bad Data Used to Fail Loudly. Now It Just Lies to You"
+  -> why RAG failures hide instead of crash, and what data
+     engineering discipline still protects against
+  -> https://aadhishrii.hashnode.dev/bad-data-used-to-fail-loudly-now-it-just-lies-to-you
 
 - "Designing for NICU Systems"
   -> the gap between technically correct and actually usable
